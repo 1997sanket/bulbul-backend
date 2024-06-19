@@ -1,6 +1,9 @@
 package com.kamble.bulbul_backend.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +20,6 @@ public class UserController {
     public List<User> getAllUsers() {
         return userService.findAllUsers();
     }
-
     @GetMapping("/{id}")
     public Optional<User> getUserById(@PathVariable String id) {
         return userService.findUserById(id);
@@ -47,5 +49,21 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable String id) {
         userService.deleteUser(id);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody User user) {
+
+        User existing = userService.findUserByUsername(user.getUsername());
+
+        if(existing == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid username");
+
+        boolean flag = userService.checkPassword(user.getPassword(), existing.getPassword());
+
+        if(flag)
+            return ResponseEntity.status(HttpStatus.OK).body("Login Successful!!");
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Incorrect password");
     }
 }
