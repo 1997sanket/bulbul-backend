@@ -9,6 +9,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/posts")
+@CrossOrigin
 public class PostController {
 
     @Autowired
@@ -26,6 +27,7 @@ public class PostController {
 
     @GetMapping("/author/{username}")
     public List<Post> getPostsByAuthorUsername(@PathVariable String username) {
+        System.out.println("Username: " + username);
         return postService.findPostsByAuthorUsername(username);
     }
 

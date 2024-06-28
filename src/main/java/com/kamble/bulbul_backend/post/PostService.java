@@ -5,6 +5,7 @@ import com.kamble.bulbul_backend.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,13 +27,18 @@ public class PostService {
     }
 
     public List<Post> findPostsByAuthorUsername(String username) {
-        return postRepository.findByAuthorUsername(username);
+        User user = userRepository.findByUsername(username);
+
+        if(user != null)
+            return postRepository.findByUser(user);
+
+        return Collections.EMPTY_LIST;
     }
 
     public Post savePost(String userId, Post post) {
-        Optional<User> userOpt = userRepository.findById(userId);
-        if (userOpt.isPresent()) {
-            post.setAuthor(userOpt.get());
+        User user = userRepository.findByUsername(userId);
+        if (user != null) {
+            post.setUser(user);
             return postRepository.save(post);
         }
         throw new RuntimeException("User not found");

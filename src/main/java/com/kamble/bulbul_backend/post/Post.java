@@ -24,5 +24,5 @@ public class Post {
     private String content;
 
     @DBRef
-    private User author;
+    private User user;
 }
